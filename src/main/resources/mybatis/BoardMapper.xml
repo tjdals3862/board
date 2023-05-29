@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.example.demo.mapper.BoardMapper">
+
+<select id="boardList" resultType="com.example.demo.dto.Board">
+    SELECT * FROM board
+    <where>
+        <choose>
+            <when test="type == '전체'">
+                AND (bno LIKE CONCAT('%', #{keyword}, '%') OR TITLE LIKE CONCAT('%', #{keyword}, '%') OR WRITER LIKE CONCAT('%', #{keyword}, '%'))
+            </when>
+            <when test="type == '아이디'">
+                AND bno LIKE CONCAT('%', #{keyword}, '%')
+            </when>
+            <when test="type == '제목'">
+                AND TITLE LIKE CONCAT('%', #{keyword}, '%')
+            </when>
+            <when test="type == '작성자'">
+                AND WRITER LIKE CONCAT('%', #{keyword}, '%')
+            </when>
+        </choose>
+    </where>
+</select>
+    
+	<select id="modifyList"  resultType="com.example.demo.dto.Board">
+		SELECT * FROM board
+		<where>
+			<if test="bno != null">
+				AND bno = #{bno}
+			</if>
+		</where>
+	</select>   
+	
+	<update id="modify" parameterType="map">
+		UPDATE board SET
+		title = #{title},
+		writer = #{writer}
+		WHERE bno = #{bno}
+	</update>
+	
+    
+    <delete id="boardDelete" parameterType="map">
+        DELETE FROM board
+        WHERE bno = #{bno}
+    </delete>
+
+</mapper>        
